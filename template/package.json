@@ -1,0 +1,25 @@
+{
+  "name": "@almadar/mobile-shell",
+  "version": "1.2.0",
+  "private": true,
+  "description": "React Native mobile shell template for Almadar",
+  "scripts": {
+    "dev": "concurrently -n server,mobile -c blue,green \"pnpm -F @almadar/shell-server dev\" \"pnpm -F @almadar/mobile-shell-client dev\"",
+    "android": "pnpm -F @almadar/mobile-shell-client android",
+    "ios": "pnpm -F @almadar/mobile-shell-client ios",
+    "web": "pnpm -F @almadar/mobile-shell-client web",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "eslint packages/",
+    "reinstall": "rm -rf node_modules packages/*/node_modules pnpm-lock.yaml && pnpm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "expo": "~52.0.0",
+    "turbo": "^2.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.30.3"
+}

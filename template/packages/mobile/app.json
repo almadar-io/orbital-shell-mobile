@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Almadar Mobile",
+    "slug": "almadar-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "almadar",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "io.almadar.mobile"
+    },
+    "android": {
+      "package": "io.almadar.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

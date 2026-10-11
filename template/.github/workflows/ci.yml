@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate-template:
+    runs-on: ${{ vars.ALMADAR_RUNNER || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Validate shell structure
+        run: |
+          test -f shell.toml || (echo "Missing shell.toml" && exit 1)
+          test -f component-mapping.json || (echo "Missing component-mapping.json" && exit 1)
+          test -d packages/mobile || (echo "Missing packages/mobile" && exit 1)
+          test -d packages/server || (echo "Missing packages/server" && exit 1)
+          test -d packages/shared || (echo "Missing packages/shared" && exit 1)
+          echo "✓ All required template files present"
+
+      - name: Validate config syntax
+        run: |
+          python3 -c "import json; json.load(open('component-mapping.json'))"
+          python3 -c "import tomllib; tomllib.load(open('shell.toml', 'rb'))"
+          echo "✓ component-mapping.json and shell.toml are valid"
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Typecheck mobile client
+        run: pnpm -F @almadar/mobile-shell-client typecheck
+
+      - name: Typecheck server
+        run: pnpm -F @almadar/shell-server typecheck
+
+      - name: Check component mapping resolves
+        run: |
+          node - <<'EOF'
+          const mapping = require('./component-mapping.json');
+          const fs = require('fs');
+          const path = require('path');
+          let errors = 0;
+          for (const [pattern, importPath] of Object.entries(mapping)) {
+            const parts = importPath.split('/');
+            const componentName = parts[parts.length - 1];
+            // importPath is like "@almadar/mobile/components/molecules/Accordion"
+            // strip the scoped package prefix (@almadar/mobile = first 2 segments) and the trailing component name
+            const subpath = parts.slice(2, -1).join('/');
+            const pkg = './' + subpath;
+            // Check the package subpath export exists in @almadar/mobile package.json
+            const mobilePkg = require('./packages/mobile/node_modules/@almadar/mobile/package.json');
+            if (!mobilePkg.exports[pkg]) {
+              console.error(`❌ ${pattern}: missing export ${pkg}`);
+              errors++;
+              continue;
+            }
+            console.log(`✓ ${pattern} -> ${pkg} { ${componentName} }`);
+          }
+          process.exit(errors ? 1 : 0);
+          EOF

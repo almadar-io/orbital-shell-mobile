@@ -1,0 +1,14 @@
+[shell]
+name = "mobile"
+version = "1.0.0"
+description = "React Native mobile application shell"
+target = "react-native"
+platforms = ["ios", "android"]
+
+[packages]
+client = "mobile"
+server = "server"
+shared = "shared"
+
+[compiler]
+generated_dir = "packages/mobile/src/generated"
