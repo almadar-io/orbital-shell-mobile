@@ -9,7 +9,7 @@ Depends on [`orbital-core`](https://github.com/almadar-io/orbital-core), [`orbit
 ## Layout
 
 - `src/` — the crate.
-- `template/` — the project scaffold the shell copies into every generated app.
+- `templates/mobile-shell/` — the project scaffold the shell copies into every generated app.
 
 ## Build and test
 

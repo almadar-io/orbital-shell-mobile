@@ -26,9 +26,7 @@ impl MobileShell {
     /// `templates/`, like every other shell.
     fn find_template_path() -> PathBuf {
         // The one template lookup (`ORBITAL_SHELLS_DIR` → beside the binary → the checkout).
-        orbital_core::renderer_packs::find_template_dir("mobile-shell").unwrap_or_else(|| {
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("template")
-        })
+        orbital_core::renderer_packs::shell_template("mobile-shell", std::path::Path::new(env!("CARGO_MANIFEST_DIR")))
     }
 
     /// Create with explicit template path

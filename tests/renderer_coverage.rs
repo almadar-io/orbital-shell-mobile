@@ -10,7 +10,7 @@
 use orbital_core::language::pattern_registry::get_component_mapping;
 use orbital_shell_mobile::ReactNativeComponentRenderer;
 use orbital_shell_typescript::{ComponentRenderer, TypeScriptBackend};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 /// SVG/map/non-GPU canvas patterns deferred until platform drawing APIs are wired.
 ///
@@ -80,7 +80,7 @@ fn non_deferred_registry_patterns() -> Vec<String> {
 fn every_non_deferred_pattern_renders_real_rn_component() {
     let renderer = ReactNativeComponentRenderer;
     let backend = TypeScriptBackend::default();
-    let config = HashMap::new();
+    let config = orbital_core::ir::OirObject::new();
 
     let patterns = non_deferred_registry_patterns();
 
@@ -150,7 +150,7 @@ fn every_non_deferred_pattern_has_component_mapping() {
 fn unknown_pattern_name_produces_sentinel_not_real_component() {
     let renderer = ReactNativeComponentRenderer;
     let backend = TypeScriptBackend::default();
-    let config = HashMap::new();
+    let config = orbital_core::ir::OirObject::new();
 
     // This name intentionally does not appear in any installed registry or mapping.
     const FAKE_PATTERN: &str = "synthetic-test-only-no-such-pattern-xyz";
@@ -202,7 +202,7 @@ fn gate_is_non_vacuous_sentinel_is_detectable() {
     // 1. The sentinel string is the literal produced by the renderer for unknown inputs.
     let renderer = ReactNativeComponentRenderer;
     let backend = TypeScriptBackend::default();
-    let config = HashMap::new();
+    let config = orbital_core::ir::OirObject::new();
     let sentinel_output =
         renderer.render_component(&backend, "no-such-pattern-gate-nonvacuous", &config, None, None);
     assert!(
@@ -242,7 +242,7 @@ fn gate_is_non_vacuous_sentinel_is_detectable() {
 fn game_canvas_patterns_emit_orbital_game_canvas() {
     let renderer = ReactNativeComponentRenderer;
     let backend = TypeScriptBackend::default();
-    let config = HashMap::new();
+    let config = orbital_core::ir::OirObject::new();
 
     // Canonical game-category patterns that must now render via OrbitalGameCanvas.
     // These were previously in DEFERRED_PATTERNS; after this change they are active.

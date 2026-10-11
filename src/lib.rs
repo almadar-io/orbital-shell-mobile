@@ -1,6 +1,7 @@
 //! React Native Mobile Shell for Orbital Compiler
 
 mod shell;
+pub mod shell_program;
 
 pub use shell::MobileShell;
 
@@ -31,7 +32,7 @@ impl ComponentRenderer for ReactNativeComponentRenderer {
         &self,
         _backend: &TypeScriptBackend,
         pattern_type: &str,
-        config: &HashMap<String, OirValue>,
+        config: &orbital_core::ir::OirObject,
         _linked_entity: Option<&str>,
         _entity_field_types: Option<&HashMap<String, EntityFieldInfo>>,
     ) -> String {
@@ -192,7 +193,7 @@ impl ComponentRenderer for ReactNativeComponentRenderer {
             // OrbitalGameCanvas wraps OrbitalGameSurfaceView (Android, via
             // orbital-shell-android JNI bridge) and OrbitalGameMTKCoordinator
             // (iOS, via orbital-shell-ios Swift bridge) — both backed by the
-            // orbital-game-renderer c_api.  On simulators without a GPU adapter
+            // orbital-canvas c_api.  On simulators without a GPU adapter
             // the component renders a labelled placeholder.
             //
             // `graph-canvas` maps to category "visualization" in component-mapping
@@ -1259,7 +1260,7 @@ mod tests {
     fn rn_component_renderer_uses_registry_category() {
         let renderer = ReactNativeComponentRenderer;
         let ts_backend = TypeScriptBackend::default();
-        let config = HashMap::new();
+        let config = orbital_core::ir::OirObject::new();
 
         // A pattern in the baked registry — stat-card maps to "stat"/"display" category.
         let out = renderer.render_component(&ts_backend, "stat-card", &config, None, None);
@@ -1279,7 +1280,7 @@ mod tests {
         // the renderer emits a plain RN View (no @almadar import required).
         let renderer = ReactNativeComponentRenderer;
         let ts_backend = TypeScriptBackend::default();
-        let config = HashMap::new();
+        let config = orbital_core::ir::OirObject::new();
 
         let out = renderer.render_component(&ts_backend, "stack", &config, None, None);
         assert!(
